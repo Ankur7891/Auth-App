@@ -13,7 +13,7 @@ My Authentication (Microservices-Based) App is a simple web application that all
 
 The Service is Accessible at `http://localhost:8080` with the Help of Docker...
 
-**GitHub Repo:** [https://github.com/Ankur7891/Auth-App](github.com/Ankur7891/Auth-App)
+**GitHub Repo:** [https://github.com/Ankur7891/Auth-App](https://github.com/Ankur7891/Auth-App)
 
 ***
 
