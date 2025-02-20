@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>22BCD46 - Authenticator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function switchTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            if (tab === 'login') {
+                loginTab.classList.add('bg-white', 'text-blue-500', 'border-b-2', 'border-blue-500');
+                loginTab.classList.remove('bg-gray-200', 'text-gray-700');
+
+                registerTab.classList.add('bg-gray-200', 'text-gray-700');
+                registerTab.classList.remove('bg-white', 'text-blue-500', 'border-b-2', 'border-blue-500');
+
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerTab.classList.add('bg-white', 'text-green-500', 'border-b-2', 'border-green-500');
+                registerTab.classList.remove('bg-gray-200', 'text-gray-700');
+
+                loginTab.classList.add('bg-gray-200', 'text-gray-700');
+                loginTab.classList.remove('bg-white', 'text-blue-500', 'border-b-2', 'border-blue-500');
+
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        async function handleAuth(action) {
+            const messageEl = document.getElementById("message");
+            messageEl.classList.add('hidden');
+
+            const username = document.getElementById(`${action}Username`).value.trim();
+            const password = document.getElementById(`${action}Password`).value.trim();
+            const email = action === 'register' ? document.getElementById("email").value.trim() : null;
+
+            if (!username || !password || (action === 'register' && !email)) {
+                messageEl.innerText = "All Fields are Required!";
+                messageEl.classList.remove('hidden');
+                return;
+            }
+
+            const endpoint = `http://localhost:8081/${action}`;
+            const payload = action === 'register' ? { username, email, password } : { username, password };
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                messageEl.innerText = result.message || result.token || "Error";
+                messageEl.classList.remove('hidden');
+            } catch (error) {
+                messageEl.innerText = "Request failed";
+                messageEl.classList.remove('hidden');
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white h-[30rem] p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center">Authenticator App</h2>
+        <p class="text-center text-gray-600 my-6">Name: <strong>Ankur Majumdar</strong> | Roll No. <strong>2022BCD0046</strong>
+        </p>
+        <div class="flex mb-6">
+            <button id="loginTab" onclick="switchTab('login')"
+                class="flex-1 py-2 px-4 text-center bg-white border-b-2 border-blue-500 text-blue-500 font-semibold">Login</button>
+            <button id="registerTab" onclick="switchTab('register')"
+                class="flex-1 py-2 px-4 text-center bg-gray-200 text-gray-700 font-semibold">Register</button>
+        </div>
+
+        <div id="loginForm">
+            <input type="text" id="loginUsername" placeholder="Username"
+                class="w-full px-3 py-2 mb-3 border rounded-md">
+            <input type="password" id="loginPassword" placeholder="Password"
+                class="w-full px-3 py-2 mb-3 border rounded-md">
+            <button onclick="handleAuth('login')"
+                class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300">Login</button>
+        </div>
+
+        <div id="registerForm" class="hidden">
+            <input type="text" id="registerUsername" placeholder="Username"
+                class="w-full px-3 py-2 mb-3 border rounded-md">
+            <input type="email" id="email" placeholder="Email" class="w-full px-3 py-2 mb-3 border rounded-md">
+            <input type="password" id="registerPassword" placeholder="Password"
+                class="w-full px-3 py-2 mb-3 border rounded-md">
+            <button onclick="handleAuth('register')"
+                class="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition duration-300">Register</button>
+        </div>
+
+        <p id="message" class="mt-4 text-center text-sm text-red-700 font-semibold hidden"></p>
+    </div>
+</body>
+
+</html>

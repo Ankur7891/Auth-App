@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: db_22bcd46
+    restart: always
+    environment:
+      POSTGRES_USER: ankur
+      POSTGRES_PASSWORD: ankur22bcd46
+      POSTGRES_DB: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    container_name: backend_22bcd46
+    image: ankur/22bcd46-backend:latest
+    restart: always
+    environment:
+      DB_USER: ankur
+      DB_PASS: ankur22bcd46
+      DB_NAME: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      JWT_SECRET: secret
+    depends_on:
+      - db
+    ports:
+      - '8081:8081'
+
+  frontend:
+    build: ./frontend
+    container_name: frontend_22bcd46
+    image: ankur/22bcd46-frontend:latest
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - '8080:80'
+
+volumes:
+  db_data:
